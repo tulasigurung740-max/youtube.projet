@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Staff House Rent Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: #1e3a8a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 25px auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 25px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .form-box,
+        .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .form-box h2,
+        .table-box h2 {
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: #16a34a;
+            color: white;
+            margin-top: 22px;
+        }
+
+        .btn-add:hover {
+            background: #15803d;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .paid {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .unpaid {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+            padding: 6px 10px;
+        }
+
+        .paid-btn {
+            background: #2563eb;
+            color: white;
+            padding: 6px 10px;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 800px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .table-box {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .dashboard,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 Staff House Rent Management</h1>
+    <p>Monthly House Rent Payment System</p>
+</header>
+
+<div class="container">
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+
+        <div class="card">
+            <h3>Total Staff</h3>
+            <p id="totalStaff">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Rent</h3>
+            <p id="totalRent">Nu. 0</p>
+        </div>
+
+        <div class="card">
+            <h3>Paid</h3>
+            <p id="totalPaid">Nu. 0</p>
+        </div>
+
+        <div class="card">
+            <h3>Outstanding</h3>
+            <p id="totalUnpaid">Nu. 0</p>
+        </div>
+
+    </div>
+
+
+    <!-- Add Rent Payment -->
+    <div class="form-box">
+
+        <h2>➕ Add Staff Rent</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Staff Name</label>
+                <input type="text" id="staffName" placeholder="Enter staff name">
+            </div>
+
+            <div>
+                <label>House / Room No.</label>
+                <input type="text" id="houseNo" placeholder="Example: H-101">
+            </div>
+
+            <div>
+                <label>Monthly Rent</label>
+                <input type="number" id="rent" placeholder="Enter rent">
+            </div>
+
+            <div>
+                <label>Month</label>
+                <input type="month" id="month">
+            </div>
+
+        </div>
+
+        <button class="btn-add" onclick="addRent()">
+            Add Rent
+        </button>
+
+    </div>
+
+
+    <!-- Rent Table -->
+    <div class="table-box">
+
+        <h2>📋 Rent Payment Records</h2>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="search"
+                placeholder="Search staff or house number..."
+                onkeyup="displayRecords()"
+            >
+        </div>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Staff Name</th>
+                    <th>House No.</th>
+                    <th>Month</th>
+                    <th>Rent</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="rentTable">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let records = JSON.parse(localStorage.getItem("rentRecords")) || [];
+
+    function addRent() {
+
+        let staffName = document.getElementById("staffName").value;
+        let houseNo = document.getElementById("houseNo").value;
+        let rent = document.getElementById("rent").value;
+        let month = document.getElementById("month").value;
+
+        if (staffName === "" || houseNo === "" || rent === "" || month === "") {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        let record = {
+            id: Date.now(),
+            staffName: staffName,
+            houseNo: houseNo,
+            rent: Number(rent),
+            month: month,
+            status: "Unpaid"
+        };
+
+        records.push(record);
+
+        localStorage.setItem("rentRecords", JSON.stringify(records));
+
+        document.getElementById("staffName").value = "";
+        document.getElementById("houseNo").value = "";
+        document.getElementById("rent").value = "";
+        document.getElementById("month").value = "";
+
+        displayRecords();
+
+    }
+
+
+    function markPaid(id) {
+
+        records = records.map(record => {
+
+            if (record.id === id) {
+                record.status = "Paid";
+            }
+
+            return record;
+
+        });
+
+        localStorage.setItem("rentRecords", JSON.stringify(records));
+
+        displayRecords();
+
+    }
+
+
+    function deleteRecord(id) {
+
+        if (confirm("Are you sure you want to delete this record?")) {
+
+            records = records.filter(record => record.id !== id);
+
+            localStorage.setItem("rentRecords", JSON.stringify(records));
+
+            displayRecords();
+        }
+
+    }
+
+
+    function displayRecords() {
+
+        let table = document.getElementById("rentTable");
+
+        let search = document
+            .getElementById("search")
+            .value
+            .toLowerCase();
+
+        table.innerHTML = "";
+
+        let filteredRecords = records.filter(record =>
+            record.staffName.toLowerCase().includes(search) ||
+            record.houseNo.toLowerCase().includes(search)
+        );
+
+
+        filteredRecords.forEach((record, index) => {
+
+            let row = table.insertRow();
+
+            row.innerHTML = `
+
+                <td>${index + 1}</td>
+
+                <td>${record.staffName}</td>
+
+                <td>${record.houseNo}</td>
+
+                <td>${record.month}</td>
+
+                <td>Nu. ${record.rent.toLocaleString()}</td>
+
+                <td class="${record.status === "Paid" ? "paid" : "unpaid"}">
+                    ${record.status}
+                </td>
+
+                <td>
+
+                    ${
+                        record.status === "Unpaid"
+                        ?
+                        `<button class="paid-btn"
+                            onclick="markPaid(${record.id})">
+                            Mark Paid
+                        </button>`
+                        :
+                        ""
+                    }
+
+                    <button class="delete-btn"
+                        onclick="deleteRecord(${record.id})">
+                        Delete
+                    </button>
+
+                </td>
+
+            `;
+
+        });
+
+
+        updateDashboard();
+
+    }
+
+
+    function updateDashboard() {
+
+        let staff = new Set(records.map(record => record.staffName));
+
+        let totalRent = records.reduce(
+            (sum, record) => sum + record.rent,
+            0
+        );
+
+        let paid = records
+            .filter(record => record.status === "Paid")
+            .reduce((sum, record) => sum + record.rent, 0);
+
+        let unpaid = records
+            .filter(record => record.status === "Unpaid")
+            .reduce((sum, record) => sum + record.rent, 0);
+
+
+        document.getElementById("totalStaff").innerText = staff.size;
+
+        document.getElementById("totalRent").innerText =
+            "Nu. " + totalRent.toLocaleString();
+
+        document.getElementById("totalPaid").innerText =
+            "Nu. " + paid.toLocaleString();
+
+        document.getElementById("totalUnpaid").innerText =
+            "Nu. " + unpaid.toLocaleString();
+
+    }
